@@ -121,25 +121,7 @@ async function enableMotion() {
       const permission = await DeviceMotionEvent.requestPermission();
       if (permission !== "granted") throw new Error("motion permission denied");
     }
-
-    window.addEventListener("devicemotion", handleMotion, { passive: true });
-    motionEnabled = true;
-    motionSeen = false;
-    state = "armed";
-    hint.textContent = "握紧手机，轻轻摇一摇";
-    bucket.setAttribute("aria-label", "摇动手机开始抽签");
-    vibrate(24);
-    playTone(440, 0.12, 0.02);
-    clearTimeout(motionWatchdog);
-    motionWatchdog = setTimeout(() => {
-      if (state === "armed" && !motionSeen) {
-        window.removeEventListener("devicemotion", handleMotion);
-        motionEnabled = false;
-        motionFallback = true;
-        hint.textContent = "当前页面无法读取动作，轻触签筒体验";
-        bucket.setAttribute("aria-label", "轻触签筒开始抽签");
-      }
-    }, 2200);
+    armMotionSensor(true);
   } catch {
     motionFallback = true;
     state = "armed";
@@ -148,22 +130,69 @@ async function enableMotion() {
   }
 }
 
+function armMotionSensor(withFeedback = false) {
+  window.removeEventListener("devicemotion", handleMotion);
+  window.addEventListener("devicemotion", handleMotion, { passive: true });
+  motionEnabled = true;
+  motionFallback = false;
+  motionSeen = false;
+  state = "armed";
+  hint.textContent = "摇一摇，请一支缘分签";
+  bucket.setAttribute("aria-label", "摇动手机开始抽签");
+
+  if (withFeedback) {
+    vibrate(24);
+    playTone(440, 0.12, 0.02);
+  }
+
+  clearTimeout(motionWatchdog);
+  motionWatchdog = setTimeout(() => {
+    if (state === "armed" && !motionSeen) {
+      window.removeEventListener("devicemotion", handleMotion);
+      motionEnabled = false;
+      motionFallback = true;
+      hint.textContent = "当前页面无法读取动作，轻触签筒体验";
+      bucket.setAttribute("aria-label", "轻触签筒开始抽签");
+    }
+  }, 2200);
+}
+
+function autoEnableMotion() {
+  if (typeof DeviceMotionEvent === "undefined") {
+    motionFallback = true;
+    state = "armed";
+    hint.textContent = "当前设备不支持摇一摇，轻触签筒体验";
+    bucket.setAttribute("aria-label", "轻触签筒开始抽签");
+    return;
+  }
+
+  if (typeof DeviceMotionEvent.requestPermission === "function") {
+    state = "idle";
+    hint.textContent = "轻触开启摇一摇";
+    bucket.setAttribute("aria-label", "轻触开启手机摇一摇权限");
+    return;
+  }
+
+  armMotionSensor(false);
+}
+
 function handleMotion(event) {
   if (state !== "armed" || !motionEnabled) return;
-  motionSeen = true;
-  clearTimeout(motionWatchdog);
 
   const now = performance.now();
   const acceleration = event.acceleration;
   const gravityAcceleration = event.accelerationIncludingGravity;
   let energy = 0;
+  let hasMotionData = false;
 
   if (acceleration && [acceleration.x, acceleration.y, acceleration.z].every(Number.isFinite)) {
+    hasMotionData = true;
     energy = Math.hypot(acceleration.x, acceleration.y, acceleration.z);
   } else if (
     gravityAcceleration &&
     [gravityAcceleration.x, gravityAcceleration.y, gravityAcceleration.z].every(Number.isFinite)
   ) {
+    hasMotionData = true;
     const current = {
       x: gravityAcceleration.x,
       y: gravityAcceleration.y,
@@ -178,6 +207,10 @@ function handleMotion(event) {
     }
     lastMotion = current;
   }
+
+  if (!hasMotionData) return;
+  motionSeen = true;
+  clearTimeout(motionWatchdog);
 
   const elapsed = Math.max(16, now - lastMotionAt);
   lastMotionAt = now;
@@ -292,3 +325,4 @@ document.addEventListener("keydown", (event) => {
 });
 
 buildBucketCutout();
+autoEnableMotion();
