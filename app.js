@@ -277,7 +277,7 @@ function showFortune() {
   ritual.classList.add("leaving");
   reveal.classList.add("visible");
   reveal.setAttribute("aria-hidden", "false");
-  fortuneSign.setAttribute("tabindex", "-1");
+  fortuneSign.setAttribute("tabindex", "0");
   setTimeout(() => fortuneSign.focus({ preventScroll: true }), 650);
   vibrate([50, 60, 90]);
   playTone(760, 0.28, 0.045);
@@ -441,6 +441,9 @@ function returnToGiftPanel() {
 
 again.addEventListener("click", returnToGiftPanel);
 fortuneSign.addEventListener("click", () => state === "revealed" && returnToGiftPanel());
+fortuneSign.addEventListener("keydown", (event) => {
+  if (state === "revealed" && (event.key === "Enter" || event.key === " ")) returnToGiftPanel();
+});
 
 document.addEventListener("keydown", (event) => {
   if ((event.key === "Enter" || event.key === " ") && state === "idle") enableMotion();
