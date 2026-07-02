@@ -9,6 +9,15 @@ const fortuneTitle = document.querySelector("#fortuneTitle");
 const fortuneText = document.querySelector("#fortuneText");
 const again = document.querySelector("#again");
 const sparkles = document.querySelector("#sparkles");
+const giftPanel = document.querySelector("#giftPanel");
+const giftScrim = document.querySelector("#giftScrim");
+const giftHotspot = document.querySelector("#giftHotspot");
+const panelHandle = document.querySelector("#panelHandle");
+const giftCards = [...document.querySelectorAll(".gift-card")];
+const sendGift = document.querySelector("#sendGift");
+const sendPrice = document.querySelector("#sendPrice");
+const balanceValue = document.querySelector("#balanceValue");
+const giftToast = document.querySelector("#giftToast");
 
 const fortunes = [
   { title: "心有灵犀签", text: "所念之人，正携月色向你而来。" },
@@ -34,6 +43,11 @@ let shakeScore = 0;
 let lastMotionAt = 0;
 let motionSeen = false;
 let motionWatchdog;
+let giftPanelOpen = true;
+let giftSent = false;
+let balance = 200;
+let selectedGift = giftCards[0];
+let toastTimer;
 
 function buildBucketCutout() {
   const image = new Image();
@@ -177,7 +191,7 @@ function autoEnableMotion() {
 }
 
 function handleMotion(event) {
-  if (state !== "armed" || !motionEnabled) return;
+  if (!motionEnabled) return;
 
   const now = performance.now();
   const acceleration = event.acceleration;
@@ -212,6 +226,11 @@ function handleMotion(event) {
   motionSeen = true;
   clearTimeout(motionWatchdog);
 
+  if (state !== "armed" || giftPanelOpen || !giftSent) {
+    shakeScore = 0;
+    return;
+  }
+
   const elapsed = Math.max(16, now - lastMotionAt);
   lastMotionAt = now;
   shakeScore = Math.max(0, shakeScore - elapsed * 0.018);
@@ -225,7 +244,7 @@ function handleMotion(event) {
 }
 
 function startShake() {
-  if (state !== "armed") return;
+  if (state !== "armed" || giftPanelOpen || !giftSent) return;
   state = "shaking";
   ritual.className = "ritual shaking";
   hint.textContent = "红线已动，缘分正在回应";
@@ -279,7 +298,77 @@ function reset() {
   playTone(440, 0.12, 0.02);
 }
 
+function selectGift(card) {
+  selectedGift = card;
+  giftCards.forEach((item) => {
+    const selected = item === card;
+    item.classList.toggle("selected", selected);
+    item.setAttribute("aria-pressed", String(selected));
+  });
+  sendPrice.textContent = card.dataset.price;
+  vibrate(12);
+}
+
+function showGiftToast(message) {
+  clearTimeout(toastTimer);
+  giftToast.textContent = message;
+  giftToast.classList.add("show");
+  toastTimer = setTimeout(() => giftToast.classList.remove("show"), 1800);
+}
+
+function closeGiftPanel() {
+  giftPanelOpen = false;
+  phone.classList.remove("gift-panel-open");
+  giftPanel.classList.remove("open");
+  giftPanel.setAttribute("aria-hidden", "true");
+  giftScrim.classList.remove("visible");
+}
+
+function openGiftPanel() {
+  if (state === "revealed" || state === "ready" || state === "shaking") reset();
+  giftSent = false;
+  giftPanelOpen = true;
+  phone.classList.add("gift-panel-open");
+  phone.classList.add("gift-not-sent");
+  giftPanel.classList.add("open");
+  giftPanel.setAttribute("aria-hidden", "false");
+  giftScrim.classList.add("visible");
+}
+
+async function sendSelectedGift() {
+  const { gift, name } = selectedGift.dataset;
+  const price = Number(selectedGift.dataset.price);
+
+  if (gift !== "fortune") {
+    showGiftToast(`${name}仅作面板占位，请选择心有灵犀签`);
+    vibrate([18, 35, 18]);
+    return;
+  }
+
+  if (balance < price) {
+    showGiftToast("钻石余额不足");
+    return;
+  }
+
+  if (state === "idle") await enableMotion();
+  balance -= price;
+  balanceValue.textContent = balance;
+  giftSent = true;
+  phone.classList.remove("gift-not-sent");
+  closeGiftPanel();
+  ritual.className = "ritual";
+  hint.textContent = motionEnabled
+    ? "摇一摇，请一支缘分签"
+    : motionFallback
+      ? "轻触签筒，开始抽签"
+      : "轻触开启摇一摇";
+  showGiftToast(`已送出 心有灵犀签 · ${price}钻`);
+  vibrate([25, 28, 45]);
+  playTone(620, 0.18, 0.035);
+}
+
 function pointerDown(event) {
+  if (!giftSent || giftPanelOpen) return;
   if (state === "idle") {
     enableMotion();
     return;
@@ -314,8 +403,20 @@ drawStick.addEventListener("pointerdown", pointerDown);
 phone.addEventListener("pointermove", pointerMove);
 phone.addEventListener("pointerup", pointerUp);
 phone.addEventListener("pointercancel", pointerUp);
-again.addEventListener("click", reset);
-fortuneSign.addEventListener("click", () => state === "revealed" && reset());
+giftCards.forEach((card) => card.addEventListener("click", () => selectGift(card)));
+sendGift.addEventListener("click", sendSelectedGift);
+giftScrim.addEventListener("click", closeGiftPanel);
+panelHandle.addEventListener("click", closeGiftPanel);
+giftHotspot.addEventListener("click", openGiftPanel);
+
+function returnToGiftPanel() {
+  reset();
+  giftSent = false;
+  openGiftPanel();
+}
+
+again.addEventListener("click", returnToGiftPanel);
+fortuneSign.addEventListener("click", () => state === "revealed" && returnToGiftPanel());
 
 document.addEventListener("keydown", (event) => {
   if ((event.key === "Enter" || event.key === " ") && state === "idle") enableMotion();
