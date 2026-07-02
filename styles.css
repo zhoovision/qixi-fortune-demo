@@ -320,10 +320,9 @@ button {
 }
 
 .fortune-thumb img {
-  width: 116%;
-  height: 116%;
+  width: 108%;
+  height: 108%;
   max-width: none;
-  mix-blend-mode: screen;
 }
 
 .gift-name {
