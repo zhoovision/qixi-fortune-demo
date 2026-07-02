@@ -49,6 +49,8 @@ let balance = 200;
 let selectedGift = giftCards[0];
 let toastTimer;
 let sendRevealTimer;
+let fortuneHoldTimer;
+let fortuneFadeTimer;
 
 function buildBucketCutout() {
   const image = new Image();
@@ -265,6 +267,8 @@ function startShake() {
 
 function showFortune() {
   if (state === "revealed") return;
+  clearTimeout(fortuneHoldTimer);
+  clearTimeout(fortuneFadeTimer);
   state = "revealed";
   dragging = false;
   const fortune = chooseFortune();
@@ -272,6 +276,7 @@ function showFortune() {
   fortuneText.textContent = fortune.text;
   drawStick.style.setProperty("--pull", "-170px");
   ritual.classList.add("leaving");
+  reveal.classList.remove("fading");
   reveal.classList.add("visible");
   reveal.setAttribute("aria-hidden", "false");
   fortuneSign.setAttribute("tabindex", "0");
@@ -280,9 +285,24 @@ function showFortune() {
   playTone(760, 0.28, 0.045);
   setTimeout(() => playTone(980, 0.35, 0.03), 120);
   burst(24);
+
+  fortuneHoldTimer = setTimeout(hideFortune, 4930);
+}
+
+function hideFortune() {
+  if (state !== "revealed") return;
+  reveal.classList.add("fading");
+  fortuneSign.removeAttribute("tabindex");
+  fortuneFadeTimer = setTimeout(() => {
+    reveal.classList.remove("visible", "fading");
+    reveal.setAttribute("aria-hidden", "true");
+    state = "complete";
+  }, 520);
 }
 
 function reset() {
+  clearTimeout(fortuneHoldTimer);
+  clearTimeout(fortuneFadeTimer);
   state = motionEnabled || motionFallback ? "armed" : "idle";
   dragging = false;
   ritual.className = "ritual";
@@ -293,7 +313,7 @@ function reset() {
     : motionFallback
       ? "轻触签筒，再抽一支签"
       : "轻触开启摇一摇";
-  reveal.classList.remove("visible");
+  reveal.classList.remove("visible", "fading");
   reveal.setAttribute("aria-hidden", "true");
   fortuneSign.removeAttribute("tabindex");
   playTone(440, 0.12, 0.02);
@@ -327,7 +347,7 @@ function closeGiftPanel() {
 
 function openGiftPanel() {
   clearTimeout(sendRevealTimer);
-  if (["revealed", "ready", "shaking", "sending"].includes(state)) reset();
+  if (["revealed", "ready", "shaking", "sending", "complete"].includes(state)) reset();
   giftSent = false;
   giftPanelOpen = true;
   sendGift.disabled = false;

@@ -721,6 +721,14 @@ button {
   animation: fortune-card-rise 760ms 170ms cubic-bezier(.16,.86,.25,1) forwards;
 }
 
+.reveal.visible.fading {
+  opacity: 0;
+}
+
+.reveal.visible.fading .fortune-sign {
+  animation: fortune-card-fade 480ms ease-in forwards;
+}
+
 .fortune-sign::before,
 .fortune-sign::after {
   content: "";
@@ -873,6 +881,11 @@ button {
   0% { opacity: 0; transform: translateY(70px) scale(.76); }
   68% { opacity: 1; transform: translateY(-7px) scale(1.035); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fortune-card-fade {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(18px) scale(.94); }
 }
 
 @keyframes gift-icon-wiggle {
