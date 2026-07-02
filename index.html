@@ -9,7 +9,7 @@
     <title>七夕 · 心有灵犀签</title>
     <link rel="preload" href="assets/live-room.png" as="image" />
     <link rel="preload" href="assets/fortune-bucket.png" as="image" />
-    <link rel="stylesheet" href="styles.css?v=3" />
+    <link rel="stylesheet" href="styles.css?v=4" />
   </head>
   <body>
     <main class="phone gift-panel-open gift-not-sent" id="phone" aria-label="七夕直播间抽签互动演示">
@@ -91,6 +91,22 @@
           </button>
         </div>
 
+        <div class="panel-draw" id="panelDraw" aria-hidden="true">
+          <div class="panel-draw-aura" aria-hidden="true"></div>
+          <div class="panel-draw-ring" aria-hidden="true"></div>
+          <div class="panel-draw-bucket" aria-hidden="true">
+            <img src="assets/fortune-bucket.png" alt="" />
+          </div>
+          <div class="panel-rising-stick" aria-hidden="true">
+            <span class="panel-stick-gem"></span>
+            <span class="panel-stick-body"><i></i><i></i><i></i></span>
+          </div>
+          <div class="panel-draw-particles" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <p><span>缘分签正在回应</span><i></i><i></i><i></i></p>
+        </div>
+
         <footer class="gift-actions">
           <button class="quantity" type="button" aria-label="赠送数量1">1 <span>⌄</span></button>
           <button class="send-gift" id="sendGift" type="button">
@@ -138,6 +154,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
   </body>
 </html>

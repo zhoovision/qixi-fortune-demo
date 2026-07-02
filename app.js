@@ -18,6 +18,7 @@ const sendGift = document.querySelector("#sendGift");
 const sendPrice = document.querySelector("#sendPrice");
 const balanceValue = document.querySelector("#balanceValue");
 const giftToast = document.querySelector("#giftToast");
+const panelDraw = document.querySelector("#panelDraw");
 
 const fortunes = [
   { title: "心有灵犀签", text: "所念之人，正携月色向你而来。" },
@@ -48,6 +49,9 @@ let giftSent = false;
 let balance = 200;
 let selectedGift = giftCards[0];
 let toastTimer;
+let drawCloseTimer;
+let drawRevealTimer;
+let drawToneTimer;
 
 function buildBucketCutout() {
   const image = new Image();
@@ -299,6 +303,7 @@ function reset() {
 }
 
 function selectGift(card) {
+  if (state === "panel-drawing") return;
   selectedGift = card;
   giftCards.forEach((item) => {
     const selected = item === card;
@@ -316,7 +321,8 @@ function showGiftToast(message) {
   toastTimer = setTimeout(() => giftToast.classList.remove("show"), 1800);
 }
 
-function closeGiftPanel() {
+function closeGiftPanel({ force = false } = {}) {
+  if (state === "panel-drawing" && !force) return;
   giftPanelOpen = false;
   phone.classList.remove("gift-panel-open");
   giftPanel.classList.remove("open");
@@ -325,9 +331,15 @@ function closeGiftPanel() {
 }
 
 function openGiftPanel() {
+  clearTimeout(drawCloseTimer);
+  clearTimeout(drawRevealTimer);
+  clearTimeout(drawToneTimer);
   if (state === "revealed" || state === "ready" || state === "shaking") reset();
   giftSent = false;
   giftPanelOpen = true;
+  giftPanel.classList.remove("drawing");
+  panelDraw.setAttribute("aria-hidden", "true");
+  sendGift.disabled = false;
   phone.classList.add("gift-panel-open");
   phone.classList.add("gift-not-sent");
   giftPanel.classList.add("open");
@@ -354,17 +366,29 @@ async function sendSelectedGift() {
   balance -= price;
   balanceValue.textContent = balance;
   giftSent = true;
-  phone.classList.remove("gift-not-sent");
-  closeGiftPanel();
-  ritual.className = "ritual";
-  hint.textContent = motionEnabled
-    ? "摇一摇，请一支缘分签"
-    : motionFallback
-      ? "轻触签筒，开始抽签"
-      : "轻触开启摇一摇";
-  showGiftToast(`已送出 心有灵犀签 · ${price}钻`);
-  vibrate([25, 28, 45]);
-  playTone(620, 0.18, 0.035);
+  state = "panel-drawing";
+  sendGift.disabled = true;
+  giftPanel.classList.add("drawing");
+  panelDraw.setAttribute("aria-hidden", "false");
+  vibrate([25, 34, 25, 38, 52]);
+  playTone(360, 0.24, 0.025);
+
+  drawToneTimer = setTimeout(() => {
+    vibrate([24, 24, 55]);
+    playTone(760, 0.26, 0.04);
+  }, 1120);
+
+  drawCloseTimer = setTimeout(() => {
+    phone.classList.remove("gift-not-sent");
+    giftPanel.classList.remove("drawing");
+    panelDraw.setAttribute("aria-hidden", "true");
+    ritual.className = "ritual leaving";
+    closeGiftPanel({ force: true });
+
+    drawRevealTimer = setTimeout(() => {
+      showFortune();
+    }, 390);
+  }, 2220);
 }
 
 function pointerDown(event) {
@@ -405,8 +429,8 @@ phone.addEventListener("pointerup", pointerUp);
 phone.addEventListener("pointercancel", pointerUp);
 giftCards.forEach((card) => card.addEventListener("click", () => selectGift(card)));
 sendGift.addEventListener("click", sendSelectedGift);
-giftScrim.addEventListener("click", closeGiftPanel);
-panelHandle.addEventListener("click", closeGiftPanel);
+giftScrim.addEventListener("click", () => closeGiftPanel());
+panelHandle.addEventListener("click", () => closeGiftPanel());
 giftHotspot.addEventListener("click", openGiftPanel);
 
 function returnToGiftPanel() {
