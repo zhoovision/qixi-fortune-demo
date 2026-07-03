@@ -734,39 +734,41 @@ button {
 
 .vertical-copy {
   position: absolute;
-  inset: 20% 21% 17%;
+  inset: 22% 23% 20%;
   z-index: 1;
   display: flex;
   flex-direction: row-reverse;
   align-items: stretch;
   justify-content: center;
-  gap: 5%;
+  gap: 6%;
   overflow: hidden;
 }
 
 .fortune-sign h1 {
-  width: 23px;
+  width: 20px;
   height: 100%;
-  flex: 0 0 23px;
+  flex: 0 0 20px;
   margin: 0;
   max-height: none;
   overflow: hidden;
   writing-mode: vertical-rl;
   text-orientation: upright;
   font-family: "Kaiti SC", "STKaiti", "Songti SC", serif;
-  font-size: clamp(16px, 4.45vw, 21px);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: .12em;
+  color: #75424f;
+  font-size: clamp(14px, 3.85vw, 18px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: .18em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
 }
 
 .sign-divider {
   width: 1px;
-  height: 68%;
+  height: 58%;
   flex: 0 0 1px;
   align-self: center;
-  margin: 0 2%;
-  background: linear-gradient(180deg, transparent, rgba(173, 117, 69, .72), transparent);
+  margin: 0 3%;
+  background: linear-gradient(180deg, transparent, rgba(173, 117, 69, .55), transparent);
 }
 
 .fortune-sign p {
@@ -779,11 +781,13 @@ button {
   overflow: hidden;
   writing-mode: vertical-rl;
   text-orientation: upright;
-  color: #664247;
+  color: rgba(86, 57, 60, .88);
   font-family: "Songti SC", "STSong", serif;
-  font-size: clamp(12px, 3.15vw, 15.5px);
-  line-height: 1.55;
-  letter-spacing: .03em;
+  font-size: clamp(10.5px, 2.75vw, 13.5px);
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: .08em;
+  text-align: start;
 }
 
 .sign-seal {
