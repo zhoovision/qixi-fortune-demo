@@ -286,7 +286,7 @@ function showFortune() {
   setTimeout(() => playTone(980, 0.35, 0.03), 120);
   burst(24);
 
-  fortuneHoldTimer = setTimeout(hideFortune, 3930);
+  fortuneHoldTimer = setTimeout(hideFortune, 2930);
 }
 
 function hideFortune() {
