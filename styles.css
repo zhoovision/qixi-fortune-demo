@@ -695,8 +695,8 @@ button {
 
 .fortune-sign {
   position: relative;
-  width: 47%;
-  aspect-ratio: 2 / 3;
+  width: 39%;
+  aspect-ratio: 512 / 1364;
   overflow: visible;
   padding: 0;
   border: 0;
@@ -705,8 +705,8 @@ button {
   text-align: center;
   pointer-events: auto;
   cursor: pointer;
-  background: url("assets/fortune-card-v2.webp") center / contain no-repeat;
-  filter: drop-shadow(0 16px 22px rgba(24, 12, 42, .34));
+  background: url("assets/fortune-card-magpie-v1.webp") center / contain no-repeat;
+  filter: drop-shadow(0 15px 20px rgba(54, 22, 38, .3));
   opacity: 0;
   transform: translateY(70px) scale(.76);
 }
@@ -734,59 +734,59 @@ button {
 
 .vertical-copy {
   position: absolute;
-  inset: 22% 23% 20%;
+  inset: 68.5% 21% 7.5%;
   z-index: 1;
   display: flex;
   flex-direction: row-reverse;
   align-items: stretch;
   justify-content: center;
-  gap: 6%;
+  gap: 5%;
   overflow: hidden;
 }
 
 .fortune-sign h1 {
-  width: 20px;
+  width: 16px;
   height: 100%;
-  flex: 0 0 20px;
+  flex: 0 0 16px;
   margin: 0;
   max-height: none;
   overflow: hidden;
   writing-mode: vertical-rl;
   text-orientation: upright;
   font-family: "Kaiti SC", "STKaiti", "Songti SC", serif;
-  color: #75424f;
-  font-size: clamp(14px, 3.85vw, 18px);
-  font-weight: 500;
+  color: #874a58;
+  font-size: clamp(11px, 3.05vw, 14px);
+  font-weight: 600;
   line-height: 1.05;
-  letter-spacing: .18em;
+  letter-spacing: .14em;
   text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
 }
 
 .sign-divider {
   width: 1px;
-  height: 58%;
+  height: 72%;
   flex: 0 0 1px;
   align-self: center;
-  margin: 0 3%;
-  background: linear-gradient(180deg, transparent, rgba(173, 117, 69, .55), transparent);
+  margin: 0 2%;
+  background: linear-gradient(180deg, transparent, rgba(177, 105, 111, .52), transparent);
 }
 
 .fortune-sign p {
-  width: 58%;
+  width: 60%;
   height: 100%;
-  max-width: 58%;
+  max-width: 60%;
   max-height: none;
-  flex: 0 1 58%;
+  flex: 0 1 60%;
   margin: 0;
   overflow: hidden;
   writing-mode: vertical-rl;
   text-orientation: upright;
-  color: rgba(86, 57, 60, .88);
+  color: rgba(99, 61, 66, .88);
   font-family: "Songti SC", "STSong", serif;
-  font-size: clamp(10.5px, 2.75vw, 13.5px);
+  font-size: clamp(8.5px, 2.3vw, 11px);
   font-weight: 400;
-  line-height: 1.7;
-  letter-spacing: .08em;
+  line-height: 1.62;
+  letter-spacing: .06em;
   text-align: start;
 }
 

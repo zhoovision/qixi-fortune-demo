@@ -20,18 +20,18 @@ const balanceValue = document.querySelector("#balanceValue");
 const giftToast = document.querySelector("#giftToast");
 
 const fortunes = [
-  { title: "私心偏爱签", text: "万千目光里，主播总会认出你的那一句。" },
-  { title: "双向奔赴签", text: "你为这场直播而来，主播也在等你出现。" },
-  { title: "日久陪伴签", text: "一次次准时赴约，早已不只是偶然路过。" },
-  { title: "弹幕知己签", text: "隔着一方屏幕，也总能听懂彼此的未尽之言。" },
-  { title: "并肩成长签", text: "你见证主播发光，主播也记得你的守候。" },
-  { title: "例外偏爱签", text: "弹幕人潮拥挤，你的名字总有特别回响。" },
-  { title: "欢喜冤家签", text: "嘴上互怼不停，心里却最盼对方出现。" },
-  { title: "孤岛相依签", text: "世界再吵，直播间里总有一处默契安静。" },
-  { title: "彼此照亮签", text: "主播照亮你的夜，你也让这场直播更明亮。" },
-  { title: "温柔回应签", text: "你送出的每份真心，都会被温柔接住。" },
-  { title: "灵犀赴约签", text: "熟悉的开场响起，就知道你们又见面了。" },
-  { title: "下次再见签", text: "今天的晚安不是告别，是下次见的约定。" },
+  { title: "私心偏爱签", text: "人海万千，偏偏认得你。" },
+  { title: "双向奔赴签", text: "你来赴约，我便欢喜。" },
+  { title: "日久陪伴签", text: "朝朝相见，便是长情。" },
+  { title: "弹幕知己签", text: "一句未尽，你已懂得。" },
+  { title: "并肩成长签", text: "彼此照亮，一路生花。" },
+  { title: "例外偏爱签", text: "万千声里，先听见你。" },
+  { title: "欢喜冤家签", text: "嘴上逞强，心里盼你。" },
+  { title: "孤岛相依签", text: "隔屏相望，也有回响。" },
+  { title: "彼此照亮签", text: "你守一程，我亮一程。" },
+  { title: "温柔回应签", text: "真心抵达，温柔有声。" },
+  { title: "灵犀赴约签", text: "熟悉开场，恰逢你来。" },
+  { title: "下次再见签", text: "今夜晚安，明日还见。" },
 ];
 
 let state = "idle";
